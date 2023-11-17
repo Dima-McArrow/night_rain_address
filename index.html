@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Night Rain</title>
+    <style>
+      body {
+        margin: 0;
+        position: relative;
+      }
+      h1 {
+        position: absolute;
+        color: white;
+        font-size: 26px;
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 23%;
+        text-transform: uppercase;
+      }
+      label, input, button, div {
+        position: absolute;
+        color: white;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      label {
+        top: 42%;
+      }
+      input {
+        top: 47%;
+        color: black;
+      }
+      button {
+        top: 52%;
+        color: black
+      }
+      div {
+        top: 57%;
+      }
+    </style>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <h1>Recherche d'adresse par D. Makarov</h1>
+    <label for="address">Adresse à rechercher</label>
+    <input type="text" name="address" id="address" />
+    <button onclick="searchAddress()">Rechercher</button>
+    <div>
+      <ul id="results"></ul>
+    </div>
+    <script type="module">
+      import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.module.js'
+
+      let myScene = new THREE.Scene()
+      let myCam = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+      myCam.position.set(5, 5, 10)
+      let myRender = new THREE.WebGLRenderer()
+      myRender.setSize(window.innerWidth, window.innerHeight)
+      document.body.appendChild(myRender.domElement)
+
+      function getRandomNumber() {
+        return Math.random() * Math.floor(10)
+      }
+      
+      function setToRandomPositionAboveScreen(drop) {
+        drop.position.set(getRandomNumber(), 10 + getRandomNumber(), getRandomNumber())
+      }
+
+      let dropNumber = 500
+
+      const raindrop = new THREE.CylinderGeometry(0.01, 0.02, 0.5, 6)
+
+      const water = new THREE.MeshBasicMaterial({color: 0xffffff})
+
+      myRender.setClearColor(0x0a0535)
+
+      // const light = new THREE.PointLight( 0xffffff, 150, 100 )
+      // light.position.set( 5, 5, 5 )
+      // myScene.add( light )
+
+      for (let i = 0; i < dropNumber; i++) {
+        let drop = new THREE.Mesh(raindrop, water)
+        setToRandomPositionAboveScreen(drop)
+        myScene.add(drop)
+      }
+
+      const animate = () => {
+        for (let j in myScene.children) {
+          myScene.children[j].translateY(-0.1)
+          if (myScene.children[j].position.y < 0) {
+            setToRandomPositionAboveScreen(myScene.children[j])
+          }
+        }
+        myRender.render(myScene, myCam)
+
+        requestAnimationFrame(animate)
+      }
+
+      animate()
+
+    </script>
+  </body>
+</html>
